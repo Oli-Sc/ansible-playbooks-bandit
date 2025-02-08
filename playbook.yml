@@ -5,7 +5,23 @@
   tasks:
 
     - name: "get name"
-      debug:
-        var: ansible_facts['user_id']
+      ansible.builtin.debug:
+        var: ansible_ssh_pass #ansible_facts['user_id']
       
-    - name: "" 
+    - name: "get content of readme"
+      ansible.builtin.lineinfile:
+        line: "The password you are looking for is:"
+        dest: ./readme
+        state: present
+      check_mode: true
+      register: bandit1_pw 
+      when:  ansible_facts['user_id'] == "bandit0"
+
+    - name: "debug"
+      ansible.builtin.slurp:
+        src: ./readme
+      register: output
+
+    - name: "get name"
+      ansible.builtin.debug:
+        msg: "{{ (output['content'] | b64decode) }}"
