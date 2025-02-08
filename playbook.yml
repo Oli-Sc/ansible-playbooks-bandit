@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  gather_facts: true
+  tasks:
+
+    - name: "get name"
+      debug:
+        var: ansible_facts['user_id']
+      
+    - name: "" 
