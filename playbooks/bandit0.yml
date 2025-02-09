@@ -1,0 +1,79 @@
+- name: bandit challenges
+  hosts: bandit0
+  gather_facts: true
+  vars_files:
+    - "{{ bandit_vault }}"
+  vars:
+    ansible_ssh_pass: "{{ bandit0_pw }}"
+  tasks:
+
+    - name: "vault content"
+      debug:
+        msg: "{{ bandit_vault }}"
+
+    - name: "gather facts"
+      ansible.builtin.gather_facts:
+    
+    - name: "get name"
+      ansible.builtin.debug:
+        var: ansible_facts['user_id']
+    
+    - name: "check if password-content in readme:"
+      ansible.builtin.lineinfile:
+        line: "The password you are looking for is:"
+        dest: ./readme
+        state: present
+      check_mode: true
+      register: bandit1_pw 
+      when:  ansible_facts['user_id'] == "bandit0"
+    
+    - name: "get content of readme file:"
+      ansible.builtin.slurp:
+        src: ./readme
+      register: output
+    
+    - name: "convert sended content and register in variable"
+      ansible.builtin.set_fact:
+        converted_content: "{{ (output['content'] | b64decode) }}"
+    
+    - name: "extract password from content"
+      ansible.builtin.set_fact:
+        password_bandit1: "{{ converted_content | regex_search('The password you are looking for is: (.*)', '\\1') }}"
+
+    - name: "check bandit1_pw entry is in file"
+      ansible.builtin.lineinfile:
+        path: "{{ bandit_vault }}"
+        regexp: 'bandit1_pw: .*'
+        state: absent
+      check_mode: true
+      register: bandit1_entry_state
+      delegate_to: localhost
+
+    - name: "set bandit1_entry in passwords.yml if not set"
+      ansible.builtin.lineinfile:
+        path: "{{ bandit_vault }}"
+        line: 'bandit1_pw: '
+        state: present
+      when: not bandit1_entry_state.changed
+      delegate_to: localhost
+
+    - name: "replace bandit1_pw"
+      ansible.builtin.replace:
+        path: "./src/passwords.yml"
+        regexp: 'bandit1_pw: .*'
+        replace: 'bandit1_pw: {{ password_bandit1[0] }}'
+      delegate_to: localhost
+
+    - name: "Entferne leere Zeilen aus Vault-Datei"
+      ansible.builtin.replace:
+        path: "{{ bandit_vault }}"
+        regexp: '^\s*\n'
+        replace: ''
+      delegate_to: localhost
+
+
+    - name: "show password"
+      ansible.builtin.debug:
+        msg: "{{ password_bandit1[0] }}"
+    
+    

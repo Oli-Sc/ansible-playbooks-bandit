@@ -1,10 +1,12 @@
 all:
+  vars:
+    bandit_vault: "./src/passwords.yml"
   hosts:
     bandit0:
       ansible_host: bandit0@bandit.labs.overthewire.org
       ansible_port: 2220
-      ansible_ssh_pass: 'bandit0'
-    #bandit1:
-    #  ansible_host: bandit1@bandit.labs.overthewire.org
-    #  ansible_port: 2220
-    # ansible_ssh_pass: ''
+      #ansible_ssh_pass: 'bandit0'
+    bandit1:
+      ansible_host: bandit1@bandit.labs.overthewire.org
+      ansible_port: 2220
+      #ansible_ssh_pass: ''
