@@ -1,6 +1,7 @@
 ---
 
-- hosts: all
+- name: bandit challenges
+  hosts: all
   gather_facts: true
   tasks:
 
@@ -8,7 +9,7 @@
       ansible.builtin.debug:
         var: ansible_ssh_pass #ansible_facts['user_id']
       
-    - name: "get content of readme"
+    - name: "check if password-content in readme:"
       ansible.builtin.lineinfile:
         line: "The password you are looking for is:"
         dest: ./readme
@@ -17,11 +18,19 @@
       register: bandit1_pw 
       when:  ansible_facts['user_id'] == "bandit0"
 
-    - name: "debug"
+    - name: "get content of readme file:"
       ansible.builtin.slurp:
         src: ./readme
       register: output
 
-    - name: "get name"
+    - name: "onvert sended content and register in variable"
+      ansible.builtin.set_fact:
+        converted_content: "{{ (output['content'] | b64decode) }}"
+      
+    - name: "extract password from content"
+      ansible.builtin.set_fact:
+        password: "{{ converted_content | regex_search('The password you are looking for is: (.*)', '\\1') }}"
+
+    - name: "show password"
       ansible.builtin.debug:
-        msg: "{{ (output['content'] | b64decode) }}"
+        var: password
