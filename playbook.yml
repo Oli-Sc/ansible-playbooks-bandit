@@ -8,8 +8,8 @@
 - name: "bandit0"
   ansible.builtin.import_playbook: playbooks/bandit0.yml
 
-# - name: "bandit1"
-#   ansible.builtin.import_playbook: tasks/bandit1.yml
-#   vars: 
-#     password_bandit1: "{{ password_bandit1[0] }}"
+- name: "bandit1"
+  ansible.builtin.import_playbook: playbooks/bandit1.yml
+  vars: 
+    password_bandit1: "{{ password_bandit1[0] }}"
 

@@ -59,7 +59,7 @@
 
     - name: "replace bandit1_pw"
       ansible.builtin.replace:
-        path: "./src/passwords.yml"
+        path: "{{ bandit_vault }}"
         regexp: 'bandit1_pw: .*'
         replace: 'bandit1_pw: {{ password_bandit1[0] }}'
       delegate_to: localhost
