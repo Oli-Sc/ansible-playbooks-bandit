@@ -1,4 +1,3 @@
-
 ---
 
 - name: bandit_1 challenges
@@ -24,6 +23,10 @@
         src: ./-
       register: output
 
-    - name: ""
-      ansible.builtin.debug:
-        var: output['content']
+    - name: "store password in var"
+      ansible.builtin.set_fact:
+        password_bandit: ["{{ output['content'] | b64decode }}"]
+ 
+    - name: "set Password in file"
+      ansible.builtin.include_tasks:
+        file: "../tasks/manage_passwords.yml"

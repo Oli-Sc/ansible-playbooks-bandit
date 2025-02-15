@@ -1,0 +1,21 @@
+---
+
+- name: bandit_2 challenges
+  hosts: bandit2
+  gather_facts: true
+  vars_files:
+    - "{{ bandit_vault }}"
+  vars:
+    ansible_ssh_pass: "{{ bandit2_pw }}"
+    ansible_remote_tmp: "/tmp"
+  tasks:
+      
+    - name: "show password from bandit2"
+      ansible.builtin.debug:
+        msg: "{{ ansible_ssh_pass }}"
+    
+    - name: "show name"
+      ansible.builtin.debug:
+        var: ansible_facts['user_id']
+
+   

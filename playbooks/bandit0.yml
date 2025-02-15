@@ -38,42 +38,46 @@
     
     - name: "extract password from content"
       ansible.builtin.set_fact:
-        password_bandit1: "{{ converted_content | regex_search('The password you are looking for is: (.*)', '\\1') }}"
+        password_bandit: "{{ converted_content | regex_search('The password you are looking for is: (.*)', '\\1') }}"
 
-    - name: "check bandit1_pw entry is in file"
-      ansible.builtin.lineinfile:
-        path: "{{ bandit_vault }}"
-        regexp: 'bandit1_pw: .*'
-        state: absent
-      check_mode: true
-      register: bandit1_entry_state
-      delegate_to: localhost
+    # - name: "check bandit1_pw entry is in file"
+    #   ansible.builtin.lineinfile:
+    #     path: "{{ bandit_vault }}"
+    #     regexp: 'bandit1_pw: .*'
+    #     state: absent
+    #   check_mode: true
+    #   register: bandit1_entry_state
+    #   delegate_to: localhost
 
-    - name: "set bandit1_entry in passwords.yml if not set"
-      ansible.builtin.lineinfile:
-        path: "{{ bandit_vault }}"
-        line: 'bandit1_pw: '
-        state: present
-      when: not bandit1_entry_state.changed
-      delegate_to: localhost
+    # - name: "set bandit1_entry in passwords.yml if not set"
+    #   ansible.builtin.lineinfile:
+    #     path: "{{ bandit_vault }}"
+    #     line: 'bandit1_pw: '
+    #     state: present
+    #   when: not bandit1_entry_state.changed
+    #   delegate_to: localhost
 
-    - name: "replace bandit1_pw"
-      ansible.builtin.replace:
-        path: "{{ bandit_vault }}"
-        regexp: 'bandit1_pw: .*'
-        replace: 'bandit1_pw: {{ password_bandit1[0] }}'
-      delegate_to: localhost
+    # - name: "replace bandit1_pw"
+    #   ansible.builtin.replace:
+    #     path: "{{ bandit_vault }}"
+    #     regexp: 'bandit1_pw: .*'
+    #     replace: 'bandit1_pw: {{ password_bandit[0] }}'
+    #   delegate_to: localhost
 
-    - name: "Entferne leere Zeilen aus Vault-Datei"
-      ansible.builtin.replace:
-        path: "{{ bandit_vault }}"
-        regexp: '^\s*\n'
-        replace: ''
-      delegate_to: localhost
+    # - name: "Entferne leere Zeilen aus Vault-Datei"
+    #   ansible.builtin.replace:
+    #     path: "{{ bandit_vault }}"
+    #     regexp: '^\s*\n'
+    #     replace: ''
+    #   delegate_to: localhost
 
 
-    - name: "show password"
-      ansible.builtin.debug:
-        msg: "{{ password_bandit1[0] }}"
+    # - name: "show password"
+    #   ansible.builtin.debug:
+    #     msg: "{{ password_bandit[0] }}"
+
+    - name: "set Password in file"
+      ansible.builtin.include_tasks:
+        file: "../tasks/manage_passwords.yml"
     
     

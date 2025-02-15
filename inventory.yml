@@ -5,8 +5,12 @@ all:
     bandit0:
       ansible_host: bandit0@bandit.labs.overthewire.org
       ansible_port: 2220
-      #ansible_ssh_pass: 'bandit0'
+      bandit_dst_name: 'bandit1'
     bandit1:
       ansible_host: bandit1@bandit.labs.overthewire.org
       ansible_port: 2220
-      #ansible_ssh_pass: ''
+      bandit_dst_name: 'bandit2'
+    bandit2:
+      ansible_host: bandit2@bandit.labs.overthewire.org
+      ansible_port: 2220
+      bandit_dst_name: 'bandit3'
