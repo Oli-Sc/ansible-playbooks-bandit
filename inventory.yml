@@ -1,6 +1,6 @@
 all:
   vars:
-    bandit_vault: "./vars/passwords.yml"
+    bandit_vault: "./src/passwords.yml"
   hosts:
     bandit0:
       ansible_host: bandit0@bandit.labs.overthewire.org
